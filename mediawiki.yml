@@ -1,0 +1,76 @@
+---
+- name: Setting up media wiki
+  hosts: all
+  remote_user: ec2-user
+  become: yes
+  tasks:
+  - name: Reset module
+    command: "dnf module reset php -y"
+  - name: Enabling Module
+    command: "dnf module enable php:7.4 -y"
+  - name: Installing Apache, PHP and mariadb
+    dnf:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+        - httpd
+        - php
+        - php-mysqlnd
+        - php-gd
+        - php-xml
+        - mariadb-server
+        - mariadb
+        - php-mbstring
+        - php-json
+        - php-intl
+
+  - name: Starting the service
+    ansible.builtin.systemd:
+      state: started
+      name: mariadb
+
+
+  - name: download mediawiki
+    get_url:
+        url: https://releases.wikimedia.org/mediawiki/1.36/mediawiki-1.36.0.tar.gz
+        dest: /home/ec2-user
+        mode: 0550
+
+  - name: Extracting the package
+    command: "tar -zxf /home/ec2-user/mediawiki-1.36.0.tar.gz"
+  - name: copying
+    command: "cp -r /home/ec2-user/mediawiki-1.36.0 /var/www/"
+
+  - name: Creating The Softlink
+    command: "ln -s /var/www/mediawiki-1.36.0/ /var/www/mediawiki"
+
+  - name: Modifying the permissions
+    command: "chown -R apache:apache /var/www/mediawiki-1.36.0"
+
+  - name: Modifying the permissions
+    command: "chown -R apache:apache /var/www/mediawiki"
+
+  - name: Run the db script
+    ansible.builtin.script: /Users/Aditya/Downloads/thoughtworks/mysql_secure_script.sh
+
+  - name: replace line
+    lineinfile: 
+      path: /etc/httpd/conf/httpd.conf
+      regexp: 'DocumentRoot "/var/www/html"' 
+      line: 'DocumentRoot "/var/www"'
+      backrefs: yes
+
+  - name: Insert multiple lines using Ansible
+    blockinfile:
+      dest: /etc/httpd/conf/httpd.conf
+      block: |
+        <Directory "/var/www/mediawiki">
+        DirectoryIndex index.html index.html.var index.php
+        </Directory>
+      backup: yes
+
+  - name: Starting the service
+    ansible.builtin.systemd:
+      state: restarted
+      name: httpd
+
