@@ -37,7 +37,7 @@ terraform apply
 
 ## Screenshots:
 
-* Terraform will show you what all resources it will be creating, in our case it will be 2 (Ec2 instanve and it's security group)
+* Terraform will show you what all resources it will be creating, in our case it will be 2 (Ec2 instance and it's security group)
 
 ![Alt text](./screenshots/t1.png?raw=true "Terraform and Ansible in action")
 
@@ -53,14 +53,14 @@ terraform apply
 
 ![Alt text](./screenshots/t4.png?raw=true "Terraform and Ansible in action")
 
-*  Just got to the browser and search <<public-ip>>/mediawiki
+*  Just got to the browser and search \<public-ip\>/mediawiki
 
 ![Alt text](./screenshots/app1.png?raw=true "Terraform and Ansible in action")
 
-* Then, you can finish the setup. It will generate a LocalSettings.php file in the end. You need to copy that file into Document Root for apache server
+* Then, you can finish the setup. It will generate a LocalSettings.php file in the end. You need to copy that file into the mediawiki project folder inside Document Root for apache server.
 
 ![Alt text](./screenshots/app2.png?raw=true "Terraform and Ansible in action")
 
-* After copying, you need to restart the server and reload the page to get the Following:
+* After copying, you need to restart the apache service and reload the page to get the Following:
 
 ![Alt text](./screenshots/app3.png?raw=true "Terraform and Ansible in action")
