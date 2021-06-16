@@ -60,7 +60,7 @@
       line: 'DocumentRoot "/var/www"'
       backrefs: yes
 
-  - name: Insert multiple lines using Ansible
+  - name: Changing the httpd.conf for mediawiki
     blockinfile:
       dest: /etc/httpd/conf/httpd.conf
       block: |
